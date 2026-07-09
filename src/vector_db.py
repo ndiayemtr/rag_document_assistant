@@ -33,3 +33,25 @@ class VectorStore:
         docs = joblib.load(self.doc_path)
 
         return index, docs
+    
+    def search(self, query_embedding, k=3):
+
+        index, docs = self.load()
+
+        distances, indices = index.search(
+            np.array([query_embedding]).astype("float32"),
+            k
+        )
+
+        results = []
+
+        for score, idx in zip(distances[0], indices[0]):
+
+            results.append(
+                {
+                    "score": float(score),
+                    "text": docs[idx]
+                }
+            )
+
+        return results
